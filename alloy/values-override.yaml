@@ -2,14 +2,14 @@ service:
   type: NodePort
 
 extraPorts:
-- name: "otelgrpc"
-  port: 4317
-  targetPort: 4317
-  protocol: "TCP"
-- name: "otelhttp"
-  port: 4318
-  targetPort: 4318
-  protocol: "TCP"
+  - name: "otelgrpc"
+    port: 4317
+    targetPort: 4317
+    protocol: "TCP"
+  - name: "otelhttp"
+    port: 4318
+    targetPort: 4318
+    protocol: "TCP"
   
 alloy:
   configMap:
@@ -32,7 +32,7 @@ alloy:
         endpoint {
           url = "https://prometheus-prod-49-prod-ap-northeast-0.grafana.net/api/prom/push"
           basic_auth {
-            username = "5145ca43-85a5-466b-a132-2a2026476cff"
+            username = "3bb7fee6-2639-477a-bb67-644ede60bdac"
             password = "<API Key>"
           }
         }
@@ -47,7 +47,7 @@ alloy:
         endpoint {
           url = "https://logs-prod-030.grafana.net/loki/api/v1/push"
           basic_auth {
-            username = "5145ca43-85a5-466b-a132-2a2026476cff"
+            username = "3bb7fee6-2639-477a-bb67-644ede60bdac"
             password = "<API Key>"
           }
         }
@@ -62,21 +62,22 @@ alloy:
       }
 
       otelcol.processor.batch "default" {
-        send_batch_size = 1000
-        timeout         = "10s"
+        send_batch_size = 1000,
+        timeout = "10s",
       }
-
-      otelcol.service "default" {
-        receivers  = [otelcol.receiver.otlp.default]
-        exporters  = [otelcol.exporter.otlp.grafana_cloud]
-        processors = [otelcol.processor.batch.default]
-      }        
 
       otelcol.exporter.otlp "grafana_cloud" {
         endpoint = "tempo-prod-20-prod-ap-northeast-0.grafana.net:443"
+        tls { insecure_skip_verify = true }
         headers = {
           "Authorization" = "Bearer <API Key>",
         }
+      }
+
+      otelcol {
+        receivers  = [otelcol.receiver.otlp.default],
+        exporters  = [otelcol.exporter.otlp.grafana_cloud],
+        processors = [otelcol.processor.batch.default],
       }
 
   mounts:
