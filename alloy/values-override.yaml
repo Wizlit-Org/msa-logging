@@ -59,25 +59,20 @@ alloy:
       otelcol.receiver.otlp "default" {
         grpc { endpoint = "0.0.0.0:4317" }
         http { endpoint = "0.0.0.0:4318" }
-      }
 
-      otelcol.processor.batch "default" {
-        send_batch_size = 1000
-        timeout = "10s"
+        output {
+          traces  = [otelcol.exporter.otlp.grafana_cloud.input]
+          metrics = [otelcol.exporter.otlp.grafana_cloud.input]
+          logs    = [otelcol.exporter.otlp.grafana_cloud.input]
+        }
       }
 
       otelcol.exporter.otlp "grafana_cloud" {
         endpoint = "tempo-prod-20-prod-ap-northeast-0.grafana.net:443"
         tls { insecure_skip_verify = true }
         headers = {
-          "Authorization" = "Bearer <API Key>",
+          "Authorization" = "Bearer <API Key>"
         }
-      }
-
-      otelcol {
-        receivers  = [otelcol.receiver.otlp.default]
-        exporters  = [otelcol.exporter.otlp.grafana_cloud]
-        processors = [otelcol.processor.batch.default]
       }
 
   mounts:
