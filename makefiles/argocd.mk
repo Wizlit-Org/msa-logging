@@ -1,4 +1,4 @@
-NAMESPACE ?= argocd
+NAMESPACE = argocd
 
 .PHONY: deploy_argocd
 deploy_argocd: create_ns  ## argocd 설치

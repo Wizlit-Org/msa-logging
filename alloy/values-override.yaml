@@ -1,93 +1,92 @@
+service:
+  type: NodePort
+
+extraPorts:
+- name: "otelgrpc"
+  port: 4317
+  targetPort: 4317
+  protocol: "TCP"
+- name: "otelhttp"
+  port: 4318
+  targetPort: 4318
+  protocol: "TCP"
+  
 alloy:
-  service:
-    type: NodePort
+  configMap:
+    create: true
+    content: |
+      livedebugging {
+        enabled = true
+      }
 
-  extraPorts:
-  - name: "otelgrpc"
-    port: 4317
-    targetPort: 4317
-    protocol: "TCP"
-  - name: "otelhttp"
-    port: 4318
-    targetPort: 4318
-    protocol: "TCP"
+      logging {
+        level  = "info"
+        format = "logfmt"
+      }
+
+      prometheus.scrape "kubernetes" {
+        targets = [ "localhost:9100" ]
+      }
+
+      prometheus.remote_write "grafana_cloud" {
+        endpoint {
+          url = "https://prometheus-prod-49-prod-ap-northeast-0.grafana.net/api/prom/push"
+          basic_auth {
+            username = "5145ca43-85a5-466b-a132-2a2026476cff"
+            password = "<API Key>"
+          }
+        }
+        external_labels = {
+          cluster = "minikube"
+        }
+      }
+
+      loki.source.kubernetes "pods" {}
+
+      loki.write "grafana_cloud" {
+        endpoint {
+          url = "https://logs-prod-030.grafana.net/loki/api/v1/push"
+          basic_auth {
+            username = "5145ca43-85a5-466b-a132-2a2026476cff"
+            password = "<API Key>"
+          }
+        }
+        labels = {
+          cluster = "minikube"
+        }
+      }
+
+      otelcol.receiver.otlp "default" {
+        grpc { endpoint = "0.0.0.0:4317" }
+        http { endpoint = "0.0.0.0:4318" }
+      }
+
+      otelcol.processor.batch "default" {
+        send_batch_size = 1000
+        timeout         = "10s"
+      }
+
+      otelcol.service "default" {
+        receivers  = [otelcol.receiver.otlp.default]
+        exporters  = [otelcol.exporter.otlp.grafana_cloud]
+        processors = [otelcol.processor.batch.default]
+      }        
+
+      otelcol.exporter.otlp "grafana_cloud" {
+        endpoint = "tempo-prod-20-prod-ap-northeast-0.grafana.net:443"
+        headers = {
+          "Authorization" = "Bearer <API Key>"
+        }
+      }
+
+  mounts:
+    varlog: true
     
-  alloy:
-    configMap:
-      create: true
-      content: |
-        livedebugging {
-          enabled = true
-        }
- 
-        logging {
-          level  = "info"
-          format = "logfmt"
-        }
-
-        prometheus.scrape "kubernetes" {
-          targets = [ "localhost:9100" ]
-        }
-
-        prometheus.remote_write "grafana_cloud" {
-          endpoint {
-            url = "https://prometheus-prod-49-prod-ap-northeast-0.grafana.net/api/prom/push"
-            basic_auth {
-              username = "5145ca43-85a5-466b-a132-2a2026476cff"
-              password = "<API Key>"
-            }
-          }
-          external_labels = {
-            cluster = "minikube"
-          }
-        }
-
-        loki.source.kubernetes "pods" {}
-
-        loki.write "grafana_cloud" {
-          endpoint {
-            url = "https://logs-prod-030.grafana.net/loki/api/v1/push"
-            basic_auth {
-              username = "5145ca43-85a5-466b-a132-2a2026476cff"
-              password = "<API Key>"
-            }
-          }
-          labels = {
-            cluster = "minikube"
-          }
-        }
-
-        otelcol.receiver.otlp "default" {
-          grpc { endpoint = "0.0.0.0:4317" }
-          http { endpoint = "0.0.0.0:4318" }
-        }
-
-        otelcol.processor.batch "default" {
-          send_batch_size = 1000
-          timeout         = "10s"
-        }
-
-        otelcol.service "default" {
-          receivers  = [otelcol.receiver.otlp.default]
-          exporters  = [otelcol.exporter.otlp.grafana_cloud]
-          processors = [otelcol.processor.batch.default]
-        }        
-
-        otelcol.exporter.otlp "grafana_cloud" {
-          endpoint = "tempo-prod-20-prod-ap-northeast-0.grafana.net:443"
-          headers = {
-            "Authorization" = "Bearer <API Key>"
-          }
-        }
-
-    mounts:
-      varlog: true
-      
-  controller:
-    tolerations:
-      - key: "service"
-        operator: "Exists"
-        effect: "NoSchedule"
-      - key: "type"
-        operator: "Exists"
-        effect: "NoSchedule"
+controller:
+  tolerations:
+    - key: "service"
+      operator: "Exists"
+      effect: "NoSchedule"
+    - key: "type"
+      operator: "Exists"
+      effect: "NoSchedule"

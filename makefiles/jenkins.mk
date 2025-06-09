@@ -1,4 +1,4 @@
-NAMESPACE ?= jenkins
+NAMESPACE = jenkins
 
 .PHONY: deploy_jenkins
 deploy_jenkins: ## jenkins 설치

@@ -1,5 +1,5 @@
 
-NAMESPACE ?= keycloak
+NAMESPACE = keycloak
 
 create_ns:
 	kubectl create ns $(NAMESPACE) --dry-run=client -o yaml | kubectl apply -f -
