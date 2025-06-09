@@ -8,3 +8,7 @@ deploy_alloy: create_ns ## Install Grafana Alloy (Grafana Cloud)
 	-n $(NAMESPACE) \
 	--create-namespace \
 	-f alloy/values-override.yaml
+
+.PHONY: set_secretKey
+set_secretKey:  ## Secret Key 적용
+	sed 's|<API KEY>|$(ALLOY_API_KEY)|g' alloy/values-override-tmp.yaml > /alloy/values-override.yaml
