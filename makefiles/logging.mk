@@ -19,7 +19,7 @@ deploy_grafana_k8s_monitoring: set_secret ## Install grafana/k8s-monitoring (Gra
 	--atomic \
 	--timeout 300s grafana-k8s-monitoring grafana/k8s-monitoring \
 	-n $(NAMESPACE) \
-	--create-namespace \	
+	--create-namespace \
 	-f /tmp/monitoring-override.yaml
 	@rm -f /tmp/monitoring-override.yaml
 
