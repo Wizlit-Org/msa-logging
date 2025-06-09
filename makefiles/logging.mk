@@ -6,5 +6,5 @@ deploy_alloy: create_ns ## Install Grafana Alloy (Grafana Cloud)
 	helm repo update
 	helm upgrade --install alloy grafana/alloy \
 	-n $(NAMESPACE) \
-	--create-namespace \	
+	--create-namespace \
 	-f values-override.yaml
