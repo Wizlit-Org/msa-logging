@@ -1,4 +1,4 @@
-NAMESPACE ?= logging
+NAMESPACE = logging
 
 .PHONY: deploy_alloy
 deploy_alloy: create_ns ## Install Grafana Alloy (Grafana Cloud)
