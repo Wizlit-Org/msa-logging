@@ -1,9 +1,10 @@
 NAMESPACE ?= argocd
 
-.PHONY deploy_argocd
-deploy_argocd: ## argocd 설치
-	@helm repo add argo https://argoproj.github.io/argo-helm && \
+.PHONY: deploy_argocd
+deploy_argocd: create_ns  ## argocd 설치
+	helm repo add argo https://argoproj.github.io/argo-helm && \
 	helm repo update && \
 	helm upgrade --install argocd argo/argo-cd \
-	-n argocd --create-namespace \
+	-n $(NAMESPACE) \
+	--create-namespace \
 	-f argocd/values-override.yaml

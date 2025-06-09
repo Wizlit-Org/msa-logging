@@ -14,7 +14,8 @@ delete_keycloak_secret: ## Delete Keycloak Secrets
 	kubectl delete -f ./keycloak/keycloak-admin-secret.yaml -n $(NAMESPACE) || true
 	kubectl delete -f ./keycloak/keycloak-mysql-secret.yaml -n $(NAMESPACE) || true
 
-install_keycloak: create_ns ## Install Keycloak
+.PHONY: install_keycloak
+install_keycloak: create_ns
 	helm repo add bitnami https://charts.bitnami.com/bitnami
 	helm repo update
 	helm upgrade --install keycloak bitnami/keycloak \

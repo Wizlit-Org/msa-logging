@@ -1,6 +1,6 @@
 NAMESPACE ?= jenkins
 
-.PHONY deploy_jenkins
+.PHONY: deploy_jenkins
 deploy_jenkins: ## jenkins 설치
 	@helm repo add jenkinsci https://charts.jenkins.io && \
 	helm repo update && \
