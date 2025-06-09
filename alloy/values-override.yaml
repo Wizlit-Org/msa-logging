@@ -24,11 +24,49 @@ alloy:
         format = "logfmt"
       }
 
+      // OTEL → Alloy → Grafana Cloud 3종 플로우!
+      otelcol.receiver.otlp "default" {
+        grpc { endpoint = "0.0.0.0:4317" }
+        http { endpoint = "0.0.0.0:4318" }
+
+        output {
+          traces  = [otelcol.exporter.otlp.grafana_cloud.input]
+          metrics = [otelcol.exporter.otlp.grafana_cloud.input]
+          logs    = [otelcol.exporter.otlp.grafana_cloud.input]
+        }
+      }
+
+      otelcol.processor.batch "default" {
+        output {
+          metrics = [otelcol.exporter.prometheus.grafana_cloud_metrics.input]
+          logs    = [otelcol.exporter.loki.grafana_cloud_logs.input]
+          traces  = [otelcol.exporter.otlp.grafana_cloud_traces.input]
+        }
+      }      
+
+      // Traces (Tempo)
+      otelcol.exporter.otlp "grafana_cloud_traces" {
+        client {
+          endpoint = "tempo-prod-20-prod-ap-northeast-0.grafana.net:443"
+          auth     = otelcol.auth.basic.grafana_cloud_traces.handler
+        }
+      }
+
+      otelcol.auth.basic "grafana_cloud_traces" {
+        username = "3bb7fee6-2639-477a-bb67-644ede60bdac"
+        password = "<API Key>"
+      }      
+
+      // Metrics (Prometheus Remote Write)
       prometheus.scrape "kubernetes" {
         targets = [ "localhost:9100" ]
       }
 
-      prometheus.remote_write "grafana_cloud" {
+      otelcol.exporter.prometheus "grafana_cloud_metrics" {
+        forward_to = [prometheus.remote_write.grafana_cloud_metrics.receiver]
+      }
+
+      prometheus.remote_write "grafana_cloud_metrics" {
         endpoint {
           url = "https://prometheus-prod-49-prod-ap-northeast-0.grafana.net/api/prom/push"
           basic_auth {
@@ -41,9 +79,14 @@ alloy:
         }
       }
 
+      // Logs (Loki)
       loki.source.kubernetes "pods" {}
 
-      loki.write "grafana_cloud" {
+      otelcol.exporter.loki "grafana_cloud_logs" {
+        forward_to = [loki.write.grafana_cloud_logs.receiver]
+      }
+      
+      loki.write "grafana_cloud_logs" {
         endpoint {
           url = "https://logs-prod-030.grafana.net/loki/api/v1/push"
           basic_auth {
@@ -54,26 +97,8 @@ alloy:
         labels = {
           cluster = "minikube",
         }
-      }
+      }          
 
-      otelcol.receiver.otlp "default" {
-        grpc { endpoint = "0.0.0.0:4317" }
-        http { endpoint = "0.0.0.0:4318" }
-
-        output {
-          traces  = [otelcol.exporter.otlp.grafana_cloud.input]
-          metrics = [otelcol.exporter.otlp.grafana_cloud.input]
-          logs    = [otelcol.exporter.otlp.grafana_cloud.input]
-        }
-      }
-
-      otelcol.exporter.otlp "grafana_cloud" {
-        endpoint = "tempo-prod-20-prod-ap-northeast-0.grafana.net:443"
-        tls { insecure_skip_verify = true }
-        headers = {
-          "Authorization" = "Bearer <API Key>"
-        }
-      }
 
   mounts:
     varlog: true
