@@ -12,4 +12,4 @@ deploy_alloy: set_secret ## Install Grafana Alloy (Grafana Cloud)
 
 .PHONY: set_secret
 set_secret:
-	@sed 's|<API Key>|$(ALLOY_API_KEY)|g' values-override.yaml > /tmp/values-override.yaml
+	@sed 's|<API Key>|$(ALLOY_API_KEY)|g' alloy/values-override.yaml > /tmp/values-override.yaml
