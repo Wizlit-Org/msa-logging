@@ -6,7 +6,7 @@ install_mysql: create_ns  ## Install Keycloak DB
 	helm repo update && \
 	helm upgrade --install mysql bitnami/mysql \
 		-n $(NAMESPACE) \
-	 	--create-namespace \	
+	 	--create-namespace \
 		--set auth.rootPassword=$(MYSQL_ROOT_PASSWORD) \
 		--set auth.database=$(MYSQL_DATABASE) \
 		--set auth.username=$(MYSQL_USER) \
