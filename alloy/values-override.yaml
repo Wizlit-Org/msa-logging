@@ -1,0 +1,193 @@
+alloy:
+  service:
+    type: NodePort  
+    # type: LoadBalancer
+    # annotations:
+    #   service.beta.kubernetes.io/ncloud-load-balancer-layer-type: "nplb"
+    #   service.beta.kubernetes.io/ncloud-load-balancer-internal: "true"
+    #   service.beta.kubernetes.io/ncloud-load-balancer-size: "SMALL"
+    #   service.beta.kubernetes.io/ncloud-load-balancer-subnet-id: "45879"
+    #   service.beta.kubernetes.io/ncloud-load-balancer-description: "인프라 ALLOY ENDPOINT - 다른 클러스터에서 접속"
+    
+  alloy:
+    configMap:
+      create: true
+      content: |
+        livedebugging {
+          enabled = true
+        }
+ 
+        logging {
+          level  = "info"
+          format = "logfmt"
+        }
+
+        discovery.kubernetes "pod" {
+          role = "pod"
+        }
+
+        // discovery.relabel rewrites the label set of the input targets by applying one or more relabeling rules.
+        // If no rules are defined, then the input targets are exported as-is.
+        discovery.relabel "pod_logs" {
+          targets = discovery.kubernetes.pod.targets
+
+          // Label creation - "namespace" field from "__meta_kubernetes_namespace"
+          rule {
+            source_labels = ["__meta_kubernetes_namespace"]
+            action = "replace"
+            target_label = "namespace"
+          }
+
+          // Label creation - "pod" field from "__meta_kubernetes_pod_name"
+          rule {
+            source_labels = ["__meta_kubernetes_pod_name"]
+            action = "replace"
+            target_label = "pod"
+          }
+
+          // Label creation - "container" field from "__meta_kubernetes_pod_container_name"
+          rule {
+            source_labels = ["__meta_kubernetes_pod_container_name"]
+            action = "replace"
+            target_label = "container"
+          }
+
+          // Label creation -  "app" field from "__meta_kubernetes_pod_label_app_kubernetes_io_name"
+          rule {
+            source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+            action = "replace"
+            target_label = "app"
+          }       
+
+          // Label creation -  "job" field from "__meta_kubernetes_namespace" and "__meta_kubernetes_pod_container_name"
+          // Concatenate values __meta_kubernetes_namespace/__meta_kubernetes_pod_container_name
+          rule {
+            source_labels = ["__meta_kubernetes_namespace", "__meta_kubernetes_pod_container_name"]
+            action = "replace"
+            target_label = "job"
+            separator = "/"
+            replacement = "$1"
+          }
+
+          // Label creation - "container" field from "__meta_kubernetes_pod_uid" and "__meta_kubernetes_pod_container_name"
+          // Concatenate values __meta_kubernetes_pod_uid/__meta_kubernetes_pod_container_name.log
+          rule {
+            source_labels = ["__meta_kubernetes_pod_uid", "__meta_kubernetes_pod_container_name"]
+            action = "replace"
+            target_label = "__path__"
+            separator = "/"
+            replacement = "/var/log/pods/*$1/*.log"
+          }
+
+          // Label creation -  "container_runtime" field from "__meta_kubernetes_pod_container_id"
+          rule {
+            source_labels = ["__meta_kubernetes_pod_container_id"]
+            action = "replace"
+            target_label = "container_runtime"
+            regex = "^(\\S+):\\/\\/.+$"
+            replacement = "$1"
+          }
+
+          // custom added from here
+          rule {
+            source_labels = ["__meta_kubernetes_pod_label_app"]
+            action = "replace"
+            target_label = "app"
+          }
+
+          // namespace 필터 (drop)
+          rule {
+            source_labels = ["__meta_kubernetes_namespace"]
+            regex        = "logging|loki|manage|monitoring|argocd"
+            action       = "drop"
+          }
+
+          // pod_name 필터 (drop)
+          rule {
+            source_labels = ["__meta_kubernetes_pod_name"]
+            regex        = "loki.*|promtail.*|alloy.*|grafana.*|prometheus.*|argocd.*"
+            action       = "drop"
+          }
+
+          // app 필터 (drop)
+          rule {
+            source_labels = ["__meta_kubernetes_pod_label_app"]
+            regex        = ".*aidt-apm.*"
+            action       = "drop"
+          }
+
+          // node_name → cluster_name 가공
+          rule {
+            source_labels = ["node_name"]
+            regex        = "node-([^-]+-[^-]+)-.*"
+            replacement  = "k8s-$1"
+            action       = "replace"
+            target_label = "cluster_name"
+          }
+
+        }
+
+        // loki.source.kubernetes tails logs from Kubernetes containers using the Kubernetes API.
+        loki.source.kubernetes "pod_logs" {
+          targets    = discovery.relabel.pod_logs.output
+          forward_to = [loki.process.pod_allowed_logs.receiver]           
+        }
+
+        loki.process "pod_allowed_logs" {
+          stage.match {
+            selector = "{app!=\"b-aidt-dj\"}"
+            action   = "drop"
+          }
+
+          forward_to = [
+            loki.process.pod_logs.receiver,
+            loki.process.pod_logs_except.receiver,
+          ]          
+        }
+
+        // loki.process receives log entries from other Loki components, applies one or more processing stages,
+        // and forwards the results to the list of receivers in the component's arguments.
+        loki.process "pod_logs" {
+          stage.match {
+            selector = "{app=~\".*\"} |= \"[LOG_FOR_APP]\""    
+            action   = "drop"
+          }                 
+          forward_to = [loki.write.pod_log.receiver]
+        }
+
+        loki.process "pod_logs_except" {
+          stage.match {
+            selector = "{app=~\".*\"} != \"[LOG_FOR_APP]\""
+            action   = "drop"
+          }            
+          forward_to = [loki.write.pod_logs_except.receiver]
+        }        
+
+        loki.write "pod_log" {
+          endpoint {
+            // port 3100
+            url = "http://visang-loki.aibookclass.com:3100/loki/api/v1/push"
+          }
+        }    
+
+        loki.write "pod_logs_except" {
+          endpoint {
+            // port 80
+            url = "http://visang-loki-distributed.aibookclass.com/loki/api/v1/push"
+          }
+        }
+
+    mounts:
+      varlog: true
+      
+  controller:
+    tolerations:
+      - key: "nvidia.com/gpu"
+        operator: "Exists"
+        effect: "NoSchedule"
+      - key: "service"
+        operator: "Exists"
+        effect: "NoSchedule"
+      - key: "type"
+        operator: "Exists"
+        effect: "NoSchedule"
