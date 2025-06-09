@@ -11,7 +11,7 @@ deploy_alloy: set_secret ## Install Grafana Alloy (Grafana Cloud)
 	@rm -f /tmp/alloy-override.yaml
 
 .PHONY: deploy_grafana_k8s_monitoring
-deploy_grafana_k8s_monitoring: set_grafana_values ## Install grafana/k8s-monitoring (Grafana Cloud)
+deploy_grafana_k8s_monitoring: set_secret ## Install grafana/k8s-monitoring (Grafana Cloud)
 	helm repo add grafana https://grafana.github.io/helm-charts
 	helm repo update
 	helm upgrade --install \
