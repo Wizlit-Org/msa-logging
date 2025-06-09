@@ -19,6 +19,7 @@ install_keycloak: create_ns ## Install Keycloak
 	helm repo update
 	helm upgrade --install keycloak bitnami/keycloak \
 		-n $(NAMESPACE) \
+		--create-namespace \	
 		-f values-keycloak.yaml
 
 .PHONY: deploy_keycloak
