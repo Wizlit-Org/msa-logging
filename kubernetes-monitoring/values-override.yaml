@@ -1,0 +1,76 @@
+cluster:
+  name: minikube
+
+externalServices:
+  prometheus:
+    host: https://prometheus-prod-49-prod-ap-northeast-0.grafana.net
+    basicAuth:
+      username: "2363713"
+      password: "<API_KEY>"
+  loki:
+    host: https://logs-prod-030.grafana.net
+    basicAuth:
+      username: "1177534"
+      password: "<API_KEY>"
+  tempo:
+    host: https://tempo-prod-20-prod-ap-northeast-0.grafana.net:443
+    basicAuth:
+      username: "1171845"
+      password: "<API_KEY>"
+
+metrics:
+  enabled: true
+  alloy:
+    metricsTuning:
+      useIntegrationAllowList: true
+  cost:
+    enabled: true
+  kepler:
+    enabled: true
+  node-exporter:
+    enabled: true
+
+logs:
+  enabled: true
+  pod_logs:
+    enabled: true
+  cluster_events:
+    enabled: true
+
+traces:
+  enabled: true
+
+receivers:
+  grpc:
+    enabled: true
+  http:
+    enabled: true
+  zipkin:
+    enabled: false
+  grafanaCloudMetrics:
+    enabled: false
+
+opencost:
+  enabled: true
+  opencost:
+    exporter:
+      defaultClusterId: minikube
+    prometheus:
+      external:
+        url: https://prometheus-prod-49-prod-ap-northeast-0.grafana.net/api/prom
+
+kube-state-metrics:
+  enabled: true
+
+prometheus-node-exporter:
+  enabled: true
+
+prometheus-operator-crds:
+  enabled: true
+
+kepler:
+  enabled: true
+
+alloy: {}
+alloy-events: {}
+alloy-logs: {}

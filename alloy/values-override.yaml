@@ -54,7 +54,7 @@ alloy:
 
       otelcol.auth.basic "grafana_cloud_traces" {
         username = "3bb7fee6-2639-477a-bb67-644ede60bdac"
-        password = "<API Key>"
+        password = "<API_KEY>"
       }      
 
       // Metrics (Prometheus Remote Write)
@@ -71,7 +71,7 @@ alloy:
           url = "https://prometheus-prod-49-prod-ap-northeast-0.grafana.net/api/prom/push"
           basic_auth {
             username = "3bb7fee6-2639-477a-bb67-644ede60bdac"
-            password = "<API Key>"
+            password = "<API_KEY>"
           }
         }
         external_labels = {
@@ -91,7 +91,7 @@ alloy:
           url = "https://logs-prod-030.grafana.net/loki/api/v1/push"
           basic_auth {
             username = "3bb7fee6-2639-477a-bb67-644ede60bdac"
-            password = "<API Key>"
+            password = "<API_KEY>"
           }
         }
         labels = {
