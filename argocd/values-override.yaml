@@ -1,0 +1,64 @@
+dex:
+  enabled: false
+
+notifications:
+  enabled: false
+
+configs:
+  rbac:
+    create: true
+    policy.default: role:admin
+    policy.csv: |
+      p, role:admin, *, *, *, allow
+      g, admin, role:admin
+
+  secret:
+    createSecret: true
+    argocdServerAdminPassword: "$2b$12$VKegf7v84HeJd7skPX/rReZ6z1SW9XQqXZ2Kkzj8Ntkb7La8NYbOm"
+
+applicationSet:
+  enabled: false
+
+redis:
+  persistence:
+    enabled: true
+    storageClass: standard
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 10m
+      memory: 32Mi
+
+server:
+  service:
+    type: NodePort
+  resources:
+    limits:
+      cpu: 100m
+      memory: 256Mi
+    requests:
+      cpu: 10m
+      memory: 64Mi
+
+controller:
+  resources:
+    limits:
+      cpu: 100m
+      memory: 256Mi
+    requests:
+      cpu: 10m
+      memory: 64Mi
+
+repoServer:
+  persistence:
+    enabled: true
+    storageClass: standard
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 10m
+      memory: 32Mi

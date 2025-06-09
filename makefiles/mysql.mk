@@ -1,5 +1,6 @@
 NAMESPACE ?= mysql
 
+.PHONY install_mysql
 install_mysql: create_ns  ## Install Keycloak DB
 	helm repo add bitnami https://charts.bitnami.com/bitnami
 	helm repo update

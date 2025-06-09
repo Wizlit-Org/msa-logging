@@ -21,11 +21,12 @@ install_keycloak: create_ns ## Install Keycloak
 		-n $(NAMESPACE) \
 		-f values-keycloak.yaml
 
-.PHONY: deploy_keycloak ## Deploy Keycloak
-deploy_keycloak: install_mysql create_keycloak_secret install_keycloak
+.PHONY: deploy_keycloak
+deploy_keycloak: ## Deploy Keycloak
+	install_mysql create_keycloak_secret install_keycloak
 
-.PHONY: remove_keycloak ## Undeploy Keycloak
-remove_keycloak:
+.PHONY: remove_keycloak
+remove_keycloak: ## Undeploy Keycloak
 	helm uninstall keycloak -n $(NAMESPACE) || true
 	helm uninstall mysql -n $(NAMESPACE) || true
 	$(MAKE) delete_keycloak_secret
