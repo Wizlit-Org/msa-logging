@@ -37,7 +37,7 @@ alloy:
           }
         }
         external_labels = {
-          cluster = "minikube"
+          cluster = "minikube",
         }
       }
 
@@ -52,7 +52,7 @@ alloy:
           }
         }
         labels = {
-          cluster = "minikube"
+          cluster = "minikube",
         }
       }
 
@@ -75,7 +75,7 @@ alloy:
       otelcol.exporter.otlp "grafana_cloud" {
         endpoint = "tempo-prod-20-prod-ap-northeast-0.grafana.net:443"
         headers = {
-          "Authorization" = "Bearer <API Key>"
+          "Authorization" = "Bearer <API Key>",
         }
       }
 
