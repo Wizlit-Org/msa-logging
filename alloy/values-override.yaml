@@ -62,8 +62,8 @@ alloy:
       }
 
       otelcol.processor.batch "default" {
-        send_batch_size = 1000,
-        timeout = "10s",
+        send_batch_size = 1000
+        timeout = "10s"
       }
 
       otelcol.exporter.otlp "grafana_cloud" {
@@ -75,9 +75,9 @@ alloy:
       }
 
       otelcol {
-        receivers  = [otelcol.receiver.otlp.default],
-        exporters  = [otelcol.exporter.otlp.grafana_cloud],
-        processors = [otelcol.processor.batch.default],
+        receivers  = [otelcol.receiver.otlp.default]
+        exporters  = [otelcol.exporter.otlp.grafana_cloud]
+        processors = [otelcol.processor.batch.default]
       }
 
   mounts:
