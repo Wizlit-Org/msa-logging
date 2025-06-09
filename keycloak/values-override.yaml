@@ -1,0 +1,38 @@
+global:
+  defaultStorageClass: ""
+  storageClass: ""
+
+auth:
+  existingSecret: keycloak-admin-secret
+  existingSecretKey: admin-password
+  adminUser: admin
+
+service:
+  type: NodePort
+
+ingress:
+  enabled: false
+  # enabled: true
+  # hostname: keycloak.example.com
+  # tls: false
+  # ingressClassName: "nginx"
+  # annotations: {}
+
+keycloakConfigCli:
+  enabled: true
+
+persistence:
+  enabled: true
+  size: 8Gi
+  storageClass: ""
+
+postgresql:
+  enabled: false
+
+externalDatabase:
+  host: mysql
+  port: 3306
+  user: keycloak
+  database: keycloakdb
+  existingSecret: keycloak-mysql-secret
+  existingSecretPasswordKey: password   # 위 secret의 key 값  

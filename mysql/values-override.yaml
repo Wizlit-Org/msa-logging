@@ -1,0 +1,13 @@
+global:
+  defaultStorageClass: ""
+  storageClass: ""
+
+auth:
+  rootPassword: ""
+  createDatabase: true
+  database: ""
+  username: ""
+  password: ""
+
+service:
+  type: ClusterIP
