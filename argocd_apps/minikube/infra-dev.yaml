@@ -62,7 +62,7 @@ spec:
         - values-override.yaml          
   destination:
     server: https://kubernetes.default.svc
-    namespace: prometheus
+    namespace: monitoring
   syncPolicy:
     automated:
       prune: true
