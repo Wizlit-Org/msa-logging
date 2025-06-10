@@ -6,13 +6,13 @@ create_ns:
 
 .PHONY: create_keycloak_secret
 create_keycloak_secret: create_ns ## Apply Keycloak Secrets from file
-	kubectl apply -f ./keycloak/keycloak-admin-secret.yaml -n $(NAMESPACE)
-	kubectl apply -f ./keycloak/keycloak-mysql-secret.yaml -n $(NAMESPACE)
+	kubectl apply -f keycloak/keycloak-admin-secret.yaml -n $(NAMESPACE)
+	kubectl apply -f keycloak/keycloak-mysql-secret.yaml -n $(NAMESPACE)
 
 .PHONY: delete_keycloak_secret
 delete_keycloak_secret: ## Delete Keycloak Secrets
-	kubectl delete -f ./keycloak/keycloak-admin-secret.yaml -n $(NAMESPACE) || true
-	kubectl delete -f ./keycloak/keycloak-mysql-secret.yaml -n $(NAMESPACE) || true
+	kubectl delete -f keycloak/keycloak-admin-secret.yaml -n $(NAMESPACE) || true
+	kubectl delete -f keycloak/keycloak-mysql-secret.yaml -n $(NAMESPACE) || true
 
 .PHONY: install_keycloak
 install_keycloak: create_ns
@@ -21,7 +21,7 @@ install_keycloak: create_ns
 	helm upgrade --install keycloak bitnami/keycloak \
 		-n $(NAMESPACE) \
 		--create-namespace \
-		-f values-keycloak.yaml
+		-f keycloak/values-keycloak.yaml
 
 .PHONY: deploy_keycloak
 deploy_keycloak: ## Deploy Keycloak

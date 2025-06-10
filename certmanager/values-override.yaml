@@ -1,0 +1,7 @@
+cert-manager:
+  crds:
+    enabled: false
+  prometheus:
+    enabled: false
+  webhook:
+    timeoutSeconds: 10

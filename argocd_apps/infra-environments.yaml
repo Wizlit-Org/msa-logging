@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: infra-environments
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - env: dev
+          - env: prod
+  template:
+    metadata:
+      name: 'infra-{{env}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/Wizlit-Org/msa-logging.git
+        targetRevision: main
+        path: argocd-apps
+        directory:
+          include: 'infra-{{env}}.yaml'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: argocd
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
