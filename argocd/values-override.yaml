@@ -2,7 +2,7 @@ dex:
   enabled: false
 
 notifications:
-  enabled: false
+  enabled: true
 
 configs:
   rbac:
