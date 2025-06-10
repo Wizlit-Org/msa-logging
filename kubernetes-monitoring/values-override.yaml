@@ -3,19 +3,19 @@ cluster:
 
 externalServices:
   prometheus:
-    host: https://prometheus-prod-49-prod-ap-northeast-0.grafana.net
+    host: https://prometheus-prod-37-prod-ap-southeast-1.grafana.net
     basicAuth:
-      username: "2363713"
+      username: "2492573"
       password: "<API_KEY>"
   loki:
-    host: https://logs-prod-030.grafana.net
+    host: https://logs-prod-020.grafana.net
     basicAuth:
-      username: "1177534"
+      username: "1241963"
       password: "<API_KEY>"
   tempo:
-    host: https://tempo-prod-20-prod-ap-northeast-0.grafana.net:443
+    host: https://tempo-prod-14-prod-ap-southeast-1.grafana.net:443
     basicAuth:
-      username: "1171845"
+      username: "1236274"
       password: "<API_KEY>"
 
 metrics:
@@ -57,7 +57,7 @@ opencost:
       defaultClusterId: minikube
     prometheus:
       external:
-        url: https://prometheus-prod-49-prod-ap-northeast-0.grafana.net/api/prom
+        url: https://prometheus-prod-37-prod-ap-southeast-1.grafana.net/api/prom
 
 kube-state-metrics:
   enabled: true
