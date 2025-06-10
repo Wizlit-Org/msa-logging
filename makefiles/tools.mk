@@ -8,3 +8,8 @@ install_k9s: ## Install latest k9s
 	sudo chmod +x /usr/local/bin/k9s
 	@echo "K9s 설치 완료. 버전:"
 	@k9s version
+
+start_minikube: ## Start Minikube
+	minikube status
+	minikube start --listen-address=0.0.0.0
+	minikube tunnel

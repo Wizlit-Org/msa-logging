@@ -33,7 +33,7 @@ redis:
 
 server:
   service:
-    type: NodePort
+    type: LoadBalancer
   resources:
     limits:
       cpu: 100m
