@@ -12,4 +12,4 @@ install_k9s: ## Install latest k9s
 start_minikube: ## Start Minikube
 	minikube status
 	minikube start --listen-address=0.0.0.0
-	minikube tunnel
+	minikube addons enable ingress

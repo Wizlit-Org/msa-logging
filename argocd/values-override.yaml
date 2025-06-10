@@ -17,7 +17,7 @@ configs:
     argocdServerAdminPassword: "$2b$12$VKegf7v84HeJd7skPX/rReZ6z1SW9XQqXZ2Kkzj8Ntkb7La8NYbOm"
 
 applicationSet:
-  enabled: false
+  enabled: true
 
 redis:
   persistence:
@@ -32,8 +32,19 @@ redis:
       memory: 32Mi
 
 server:
+  ingress:
+    enabled: true
+    annotations:
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    hosts:
+      - host: argocd.43.202.138.109.nip.io
+        paths:
+          - path: /
+            pathType: Prefix
+
   service:
-    type: LoadBalancer
+    type: ClusterIP
   resources:
     limits:
       cpu: 100m
