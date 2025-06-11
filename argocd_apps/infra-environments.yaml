@@ -5,29 +5,25 @@ metadata:
   namespace: argocd
 spec:
   generators:
-    - matrix:
-        generators:
-          - list:
-              elements:
-                - cluster: in-cluster
-          - list:
-              elements:
-                - env: dev
-                - env: prod
-                - env: stag
+    - git:
+        repoURL: https://github.com/Wizlit-Org/msa-logging.git
+        revision: main
+        directories:
+          - path: argocd_apps/in-cluster
+            include: infra-*.yaml
   template:
     metadata:
-      name: '{{cluster}}-{{env}}-infra'
+      name: '{{path.basename}}'
     spec:
       project: default
       source:
         repoURL: https://github.com/Wizlit-Org/msa-logging.git
         targetRevision: main
-        path: argocd_apps/{{cluster}}
+        path: argocd_apps/in-cluster
         directory:
-          include: 'infra-{{env}}.yaml'
+          include: '{{path.basename}}'
       destination:
-        name: '{{cluster}}'
+        server: https://kubernetes.default.svc
       syncPolicy:
         automated:
           prune: true
