@@ -11,7 +11,7 @@
 # ───────────────────────────────────────────────────────
 define helm_full_install
 	@echo "🔧 envsubst 치환 및 Helm 설치: $(1)" && \
-	@envsubst < $(5) > /tmp/tmp-$(1)-override.yaml && \
+	envsubst < $(5) > /tmp/tmp-$(1)-override.yaml && \
 	helm repo add $(2) $(3) && \
 	helm repo update && \
 	helm upgrade --install $(1) $(4) \
