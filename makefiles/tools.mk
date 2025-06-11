@@ -9,6 +9,14 @@ install_k9s: ## Install latest k9s
 	@echo "K9s 설치 완료. 버전:"
 	@k9s version
 
+.PHONY: install_helm
+install_helm: ## helm 설치
+	@VERSION="v3.13.2" && \
+	curl -LO https://get.helm.sh/helm-$${VERSION}-linux-amd64.tar.gz && \
+	tar -zxvf helm-$${VERSION}-linux-amd64.tar.gz && \
+	sudo mv linux-amd64/helm /usr/local/bin/helm && \
+	rm -rf linux-amd64 helm-$${VERSION}-linux-amd64.tar.gz
+
 start_minikube: ## Start Minikube
 	minikube status
 	minikube start --listen-address=0.0.0.0
