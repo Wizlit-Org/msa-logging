@@ -1,15 +1,10 @@
 global:
   domain: argocd.${DOMAIN}
-
 dex:
   enabled: false
 
 notifications:
   enabled: true
-  argocdUrl: "https://argocd.${DOMAIN}"
-  notifiers:
-    service.slack: |
-      token: $slack-token  
 
 configs:
   cm:
@@ -37,13 +32,12 @@ configs:
     createSecret: true
     argocdServerAdminPassword: "$2b$12$VKegf7v84HeJd7skPX/rReZ6z1SW9XQqXZ2Kkzj8Ntkb7La8NYbOm"
     extra:
-      oidc.keycloak.clientSecret: hBzKutVDcwCgmaWfKSOm7Ke21UqpCyU6    
+      oidc.keycloak.clientSecret: ${KEYCLOAK_ARGOCD_CLIENT_SECRET}
 
 applicationSet:
   enabled: true
 
 redis:
-  enabled: true
   persistence:
     enabled: true
     storageClass: standard
@@ -54,30 +48,17 @@ redis:
     requests:
       cpu: 10m
       memory: 32Mi
-  exporter:
-    enabled: false
-
-redis-ha:
-  enabled: false
-  persistentVolume:
-    enabled: false
 
 server:
   ingress:
     enabled: true
     annotations:
       nginx.ingress.kubernetes.io/ssl-redirect: "ture"
-      cert-manager.io/cluster-issuer: "${DOMAIN}-issuer"  
+      cert-manager.io/cluster-issuer: ""    
       nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
       nginx.ingress.kubernetes.io/ssl-passthrough: "true" 
-
     ingressClassName: "nginx"
     hostname: "argocd.${DOMAIN}"
-
-    extraTls:
-      - hosts:
-        - argocd.${DOMAIN}
-        secretName: argocd-tls
 
   service:
     type: ClusterIP

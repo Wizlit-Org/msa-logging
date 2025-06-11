@@ -6,17 +6,17 @@ externalServices:
     host: https://prometheus-prod-37-prod-ap-southeast-1.grafana.net
     basicAuth:
       username: "2492573"
-      password: "<API_KEY>"
+      password: "${GRAFANA_CLOUD_TOKEN}"
   loki:
     host: https://logs-prod-020.grafana.net
     basicAuth:
       username: "1241963"
-      password: "<API_KEY>"
+      password: "${GRAFANA_CLOUD_TOKEN}"
   tempo:
     host: https://tempo-prod-14-prod-ap-southeast-1.grafana.net:443
     basicAuth:
       username: "1236274"
-      password: "<API_KEY>"
+      password: "${GRAFANA_CLOUD_TOKEN}"
 
 metrics:
   enabled: true
