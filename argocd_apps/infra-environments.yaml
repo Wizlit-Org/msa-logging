@@ -23,7 +23,7 @@ spec:
       source:
         repoURL: https://github.com/Wizlit-Org/msa-logging.git
         targetRevision: main
-        path: argocd-apps/{{cluster}}
+        path: argocd_apps/{{cluster}}
         directory:
           include: 'infra-{{env}}.yaml'
       destination:
