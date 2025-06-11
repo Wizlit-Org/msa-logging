@@ -12,13 +12,13 @@
 define helm_full_install
 	@echo "🔧 envsubst 치환 및 Helm 설치: $(1)" && \
 	export $(shell cat .env | xargs) && \
-	envsubst < $(5) > /tmp/$(1)-tmp-override.yaml && \
+	@envsubst < $(5) > /tmp/tmp-$(1)-override.yaml && \
 	helm repo add $(2) $(3) && \
 	helm repo update && \
 	helm upgrade --install $(1) $(4) \
 	-n $(6) \
 	--create-namespace \
-	-f /tmp/$(1)-tmp-override.yaml \
+	-f /tmp/tmp-$(1)-override.yaml \
 	$(7) && \
-	rm -f /tmp/$(1)-tmp-override.yaml
+	rm -f /tmp/tmp-$(1)-override.yaml
 endef
