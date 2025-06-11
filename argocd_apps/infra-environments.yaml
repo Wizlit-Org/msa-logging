@@ -9,7 +9,7 @@ spec:
         generators:
           - list:
               elements:
-                - cluster: minikube
+                - cluster: in-cluster
           - list:
               elements:
                 - env: dev

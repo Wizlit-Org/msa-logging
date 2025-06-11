@@ -1,3 +1,4 @@
+TMP = tmp
 
 # ───────────────────────────────────────────────────────
 # 공통 Helm 설치 함수 정의 (envsubst + Helm)
@@ -10,14 +11,30 @@
 # $(7): 추가 Helm 플래그 (e.g. --version x.x.x --atomic)
 # ───────────────────────────────────────────────────────
 define helm_full_install
-	@echo "🔧 envsubst 치환 및 Helm 설치: $(1)" && \
-	envsubst < $(5) > /tmp/tmp-$(1)-override.yaml && \
+	@echo "🔧 Helm Rendering...: $(1)" && \
+	mkdir -p $(TMP) && \
+	$(call render_env_file,$(5),$(TMP)/tmp-override.yaml) && \
+	$(call helm_apply,$(1),$(2),$(3),$(4),$(6),$(7),$(TMP)/tmp-override.yaml)
+endef
+
+define helm_apply
+	echo "🚀 Helm 배포 실행: $(1)" && \
 	helm repo add $(2) $(3) && \
 	helm repo update && \
 	helm upgrade --install $(1) $(4) \
-	-n $(6) \
+	-n $(5) \
 	--create-namespace \
-	-f /tmp/tmp-$(1)-override.yaml \
-	$(7) && \
-	rm -f /tmp/tmp-$(1)-override.yaml
+	$(6) \
+	-f $(7)
+endef
+
+define render_env_file
+	echo "📄 .env → \${} 치환 중..." && \
+	cp $(1) $(2) && \
+	while IFS='=' read -r key val; do \
+	  if [ -z "$$key" ] || echo "$$key" | grep -q '^#'; then continue; fi; \
+	  val_escaped=$$(printf '%s\n' "$$val" | sed 's/[\/&]/\\&/g'); \
+	  echo "🔁 치환: \$${$${key}} → $$val_escaped"; \
+	  sed -i "s|\$${$${key}}|$$val_escaped|g" $(2); \
+	done < .env
 endef
