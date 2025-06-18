@@ -6,5 +6,4 @@ deploy_knative: ## knative 설치
 	helm repo update && \
 	helm upgrade --install knative-operator knative-operator/knative-operator \
 	-n $(NAMESPACE) \
-	--create-namespace \
-	-f knative/value-override.yaml
+	--create-namespace

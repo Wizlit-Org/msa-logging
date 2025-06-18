@@ -19,5 +19,5 @@ install_helm: ## helm 설치
 
 start_minikube: ## Start Minikube
 	minikube status
-	minikube start --listen-address=0.0.0.0
+	minikube start --driver=none   --container-runtime=docker   --cri-socket=/var/run/cri-dockerd.sock
 	minikube addons enable ingress
