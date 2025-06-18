@@ -13,5 +13,5 @@ deploy_knative_operator:
 
 .PHONY: deploy_knative_cr
 deploy_knative_cr:
-	kubectl apply -f knative/knative-serving.yaml
-	kubectl apply -f knative/knative-eventing.yaml	
+	kubectl apply -f knative-operator/knative-serving.yaml
+	kubectl apply -f knative-operator/knative-eventing.yaml	
