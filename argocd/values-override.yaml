@@ -63,24 +63,23 @@ redis-ha:
     enabled: false
 
 server:
+  service:
+    type: ClusterIP
   ingress:
     enabled: true
+    ingressClassName: "nginx"
+
     annotations:
-      nginx.ingress.kubernetes.io/ssl-redirect: "ture"
-      cert-manager.io/cluster-issuer: "${DOMAIN}-issuer"  
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      cert-manager.io/cluster-issuer: "${DOMAIN}-issuer"
       nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
       nginx.ingress.kubernetes.io/ssl-passthrough: "true" 
-
-    ingressClassName: "nginx"
-    hostname: "argocd.${DOMAIN}"
 
     extraTls:
       - hosts:
         - argocd.${DOMAIN}
         secretName: argocd-tls
 
-  service:
-    type: ClusterIP
   resources:
     limits:
       cpu: 100m
