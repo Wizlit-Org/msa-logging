@@ -33,9 +33,9 @@ configs:
 
   secret:
     createSecret: true
-    argocdServerAdminPassword: "$2y$10$ikq0vw2Utp5.v2ScIVIKwO8xIHy3IbG5i/4DYcGyYoY6nGrVaIE9i"
+    argocdServerAdminPassword: "$2b$10$QkGQL1L00nBebiuIXlCYFOOBUVkTt/Z96.mHLWGAUDvNXsM1AxNbS"
     extra:
-      oidc.keycloak.clientSecret: hBzKutVDcwCgmaWfKSOm7Ke21UqpCyU6   
+      oidc.keycloak.clientSecret: hBzKutVDcwCgmaWfKSOm7Ke21UqpCyU6
 
 applicationSet:
   enabled: true
