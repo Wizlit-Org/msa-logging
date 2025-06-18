@@ -1,5 +1,8 @@
 NAMESPACE = knative-operator
 
+.PHONY: deploy_knative
+deploy_knative: deploy_knative_operator deploy_knative_cr ## knative 설치
+
 .PHONY: deploy_knative_operator
 deploy_knative_operator:
 	@helm repo add knative-operator https://knative.github.io/operator && \
@@ -11,4 +14,4 @@ deploy_knative_operator:
 .PHONY: deploy_knative_cr
 deploy_knative_cr:
 	kubectl apply -f knative/knative-serving.yaml
-	kubectl apply -f knative/knative-eventing.yaml
+	kubectl apply -f knative/knative-eventing.yaml	
