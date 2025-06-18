@@ -9,7 +9,7 @@ spec:
         generators:
           - list:
               elements:
-                - cluster: minikube
+                - cluster: in-cluster
           - list:
               elements:
                 - env: dev
@@ -23,11 +23,10 @@ spec:
       source:
         repoURL: https://github.com/Wizlit-Org/msa-logging.git
         targetRevision: main
-        path: argocd-apps/{{cluster}}
-        directory:
-          include: 'infra-{{env}}.yaml'
+        path: argocd_apps/{{cluster}}/{{env}}
       destination:
-        name: '{{cluster}}'
+        server: https://kubernetes.default.svc
+        namespace: '{{env}}'
       syncPolicy:
         automated:
           prune: true

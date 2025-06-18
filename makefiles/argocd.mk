@@ -18,6 +18,7 @@ deploy_argocd: create_ns  ## argocd 설치
 		https://argoproj.github.io/argo-helm, \
 		argo/argo-cd, \
 		argocd/values-override.yaml, \
-		$(NAMESPACE), \
+		argocd, \
+		"--atomic" \
 		)
 	kubectl apply -f https://raw.githubusercontent.com/Wizlit-Org/msa-logging/refs/heads/main/argocd_apps/infra-environments.yaml		

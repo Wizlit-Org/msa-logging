@@ -9,7 +9,7 @@ notifications:
   argocdUrl: "https://argocd.${DOMAIN}"
   notifiers:
     service.slack: |
-      token: $slack-token  
+      token: ${SLACK_TOKEN}
 
 configs:
   cm:
@@ -37,7 +37,7 @@ configs:
     createSecret: true
     argocdServerAdminPassword: "admin"
     extra:
-      oidc.keycloak.clientSecret: hBzKutVDcwCgmaWfKSOm7Ke21UqpCyU6    
+      oidc.keycloak.clientSecret: hBzKutVDcwCgmaWfKSOm7Ke21UqpCyU6   
 
 applicationSet:
   enabled: true
