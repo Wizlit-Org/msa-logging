@@ -64,7 +64,7 @@ redis-ha:
 
 server:
   service:
-    type: ClusterIP
+    type: NodePort
   ingress:
     enabled: true
     ingressClassName: "nginx"
